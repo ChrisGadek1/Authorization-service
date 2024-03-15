@@ -10,10 +10,11 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 
 import java.util.NoSuchElementException;
 
-@SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
+@SpringBootApplication
 //@EnableJpaRepositories("com.example.authorization_service.data.repositories")
 public class AuthorizationServiceApplication {
 
@@ -26,6 +27,8 @@ public class AuthorizationServiceApplication {
         return args -> {
             User user = new User();
             user.setName("John");
+            user.setPasswordHashed(BCrypt.hashpw("qwerty123", BCrypt.gensalt()));
+            user.setUsername("johny123");
 
             repository.save(user);
             User saved = repository.findById(user.getId()).orElseThrow(NoSuchElementException::new);
