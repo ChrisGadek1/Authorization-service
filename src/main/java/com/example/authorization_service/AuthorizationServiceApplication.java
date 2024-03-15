@@ -27,7 +27,7 @@ public class AuthorizationServiceApplication {
         return args -> {
             User user = new User();
             user.setName("John");
-            user.setPasswordHashed(BCrypt.hashpw("qwerty123", BCrypt.gensalt()));
+            user.setPassword(BCrypt.hashpw("qwerty123", BCrypt.gensalt()));
             user.setUsername("johny123");
 
             repository.save(user);
