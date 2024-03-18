@@ -1,21 +1,23 @@
 package com.example.authorization_service;
 
+import com.example.authorization_service.data.repositories.SecretKeyRepository;
 import com.example.authorization_service.data.repositories.UserRepository;
+import com.example.authorization_service.domain.models.SecretKey;
 import com.example.authorization_service.domain.models.User;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Encoders;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.crypto.bcrypt.BCrypt;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.Protocol;
 
 import java.util.NoSuchElementException;
 
 @SpringBootApplication
-//@EnableJpaRepositories("com.example.authorization_service.data.repositories")
 public class AuthorizationServiceApplication {
 
     public static void main(String[] args) {
@@ -23,8 +25,13 @@ public class AuthorizationServiceApplication {
     }
 
     @Bean
-    CommandLineRunner runner(UserRepository repository) {
+    CommandLineRunner runner(UserRepository repository, SecretKeyRepository secretKeyRepository) {
         return args -> {
+            if(secretKeyRepository.findById("SecretKey").isEmpty()) {
+                javax.crypto.SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+                String secretString =  Encoders.BASE64.encode(key.getEncoded());
+                secretKeyRepository.save(new SecretKey("SecretKey", secretString));
+            }
             User user = new User();
             user.setName("John");
             user.setPassword(BCrypt.hashpw("qwerty123", BCrypt.gensalt()));
