@@ -12,10 +12,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCrypt;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.Protocol;
-
-import java.util.NoSuchElementException;
 
 @SpringBootApplication
 public class AuthorizationServiceApplication {
@@ -38,8 +34,6 @@ public class AuthorizationServiceApplication {
             user.setUsername("johny123");
 
             repository.save(user);
-            User saved = repository.findById(user.getId()).orElseThrow(NoSuchElementException::new);
-            System.out.println(saved.getName());
         };
     }
 

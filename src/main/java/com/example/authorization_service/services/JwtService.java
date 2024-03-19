@@ -20,7 +20,7 @@ public class JwtService {
         this.secretKeyRepository = secretKeyRepository;
     }
 
-    public String generateJwt(HashMap<String, String> claims, UserDetails user) {
+    public String generateJwt(HashMap<String, String> claims, UserDetails user, Date expiration) {
         if(secretKeyRepository.findById("SecretKey").isEmpty()) {
             throw new IllegalStateException("No secret key in redis found");
         }
@@ -31,7 +31,7 @@ public class JwtService {
                 .subject(user.getUsername())
                 .claims(claims)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + (7 * 24 * 60 * 60 * 1000)))
+                .expiration(expiration)
                 .signWith(key)
                 .compact();
     }
