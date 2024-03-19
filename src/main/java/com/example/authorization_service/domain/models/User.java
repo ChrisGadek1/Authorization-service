@@ -1,10 +1,12 @@
 package com.example.authorization_service.domain.models;
 
 
+import com.example.authorization_service.domain.requestBody.RegistrationForm;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 
 import java.util.Collection;
 import java.util.List;
@@ -35,6 +37,17 @@ public class User implements UserDetails {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public User() {
+    }
+
+    public User(RegistrationForm registrationForm) {
+        this.username = registrationForm.username();
+        this.password = BCrypt.hashpw(registrationForm.password(), BCrypt.gensalt());
+        this.name = registrationForm.name();
+        this.surname = registrationForm.surname();
+        this.role = "user";
     }
 
     @Override

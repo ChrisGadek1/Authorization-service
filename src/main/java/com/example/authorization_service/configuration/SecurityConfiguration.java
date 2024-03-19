@@ -33,6 +33,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> {
                     auth
                             .requestMatchers("/authorization/login").permitAll()
+                            .requestMatchers("/authorization/register").permitAll()
                             .requestMatchers("/authorization/refresh").hasRole("refresh")
                             .anyRequest().hasRole("access");
                 })
