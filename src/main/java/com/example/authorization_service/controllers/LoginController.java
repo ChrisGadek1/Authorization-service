@@ -47,8 +47,8 @@ public class LoginController {
     @GetMapping(path = "/refresh", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, Object>> refresh(@AuthenticationPrincipal UserDetails userDetails) {
         return new ResponseEntity<>(Map.of(
-                "token", jwtService.generateJwt(new HashMap<>(), userDetails, new Date(System.currentTimeMillis() + (24 * 60 * 60 * 1000))),
-                "refresh_token", jwtService.generateJwt(new HashMap<>(), userDetails, new Date(System.currentTimeMillis() + (180L * 24 * 60 * 60 * 1000)))
+                "token", jwtService.generateJwt(new HashMap<>(Map.of("type", "access")), userDetails, new Date(System.currentTimeMillis() + (24 * 60 * 60 * 1000))),
+                "refresh_token", jwtService.generateJwt(new HashMap<>(Map.of("type", "refresh")), userDetails, new Date(System.currentTimeMillis() + (180L * 24 * 60 * 60 * 1000)))
         ), HttpStatus.OK);
     }
 }
