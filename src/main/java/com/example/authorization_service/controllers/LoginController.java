@@ -35,8 +35,8 @@ public class LoginController {
         Optional<User> optionalUser = userRepository.findByUsername(loginForm.username());
         if(optionalUser.isPresent() && optionalUser.get().isEnabled() && BCrypt.checkpw(loginForm.password(), optionalUser.get().getPassword())) {
             return new ResponseEntity<>(Map.of(
-                    "token", jwtService.generateJwt(new HashMap<>(), optionalUser.get(), new Date(System.currentTimeMillis() + (24 * 60 * 60 * 1000))),
-                    "refresh_token", jwtService.generateJwt(new HashMap<>(), optionalUser.get(), new Date(System.currentTimeMillis() + (180L * 24 * 60 * 60 * 1000)))
+                    "token", jwtService.generateJwt(new HashMap<>(Map.of("type", "access")), optionalUser.get(), new Date(System.currentTimeMillis() + (24 * 60 * 60 * 1000))),
+                    "refresh_token", jwtService.generateJwt(new HashMap<>(Map.of("type", "refresh")), optionalUser.get(), new Date(System.currentTimeMillis() + (180L * 24 * 60 * 60 * 1000)))
             ), HttpStatus.OK);
         }
         else {

@@ -12,12 +12,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
+import java.util.ArrayList;
 
 @Order(1)
 public class JwtValidationFilter implements Filter {
@@ -43,9 +45,12 @@ public class JwtValidationFilter implements Filter {
                 .build()
                 .parseSignedClaims(tokenFromResponse)
                 .getPayload();
+        String type = parsedClaims.get("type", String.class);
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(parsedClaims.getSubject());
+        ArrayList<SimpleGrantedAuthority> authorities = (ArrayList<SimpleGrantedAuthority>) new ArrayList<>(userDetails.getAuthorities());
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + type));
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(), userDetails.getAuthorities());
+                new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(), authorities);
         SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
     }
 

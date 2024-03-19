@@ -33,7 +33,8 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> {
                     auth
                             .requestMatchers("/authorization/login").permitAll()
-                            .anyRequest().authenticated();
+                            .requestMatchers("/authorization/refresh").hasRole("refresh")
+                            .anyRequest().hasRole("access");
                 })
                 .csrf(AbstractHttpConfigurer::disable)
                 .exceptionHandling(

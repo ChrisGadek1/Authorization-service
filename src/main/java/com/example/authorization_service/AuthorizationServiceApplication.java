@@ -30,6 +30,7 @@ public class AuthorizationServiceApplication {
             }
             User user = new User();
             user.setName("John");
+            user.setRole("user");
             user.setPassword(BCrypt.hashpw("qwerty123", BCrypt.gensalt()));
             user.setUsername("johny123");
 
